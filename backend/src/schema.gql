@@ -1,0 +1,220 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input ChangeMemberRoleDto {
+  memberId: Float!
+  role: String!
+}
+
+type Channel {
+  createdAt: DateTime
+  id: Float!
+  members: [Member!]
+  name: String
+  type: ChannelType!
+  updatedAt: DateTime
+}
+
+"""Defines the type of channel"""
+enum ChannelType {
+  AUDIO
+  TEXT
+  VIDEO
+}
+
+type Conversation {
+  id: Float!
+  memberOne: Member!
+  memberOneId: Float
+  memberTwo: Member!
+  memberTwoId: Float
+  messages: [DirectMessage!]!
+}
+
+input CreateChannelMessageDto {
+  channelId: Float!
+  content: String!
+}
+
+input CreateChannelOnServerDto {
+  name: String!
+  serverId: Float!
+  type: String!
+}
+
+input CreateMessageDto {
+  channelId: Float
+  content: String!
+  conversationId: Float
+}
+
+input CreateProfileDto {
+  email: String!
+  imageUrl: String!
+  name: String!
+}
+
+input CreateServerDto {
+  name: String!
+  profileId: Float!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DeleteChannelFromServerDto {
+  channelId: Float!
+}
+
+input DeleteMemberDto {
+  memberId: Float!
+}
+
+input DeleteServerDto {
+  serverId: Float!
+}
+
+type DirectMessage {
+  content: String
+  conversation: Conversation
+  conversationId: Float
+  createdAt: String
+  deleted: Boolean
+  fileUrl: String
+  id: Float
+  member: Member!
+  memberId: Float
+  updatedAt: String
+}
+
+input FindChannelByIdDto {
+  channelId: Float!
+  serverId: Float!
+}
+
+input GetOrCreateConversationDto {
+  memberOneId: Float!
+  memberTwoId: Float!
+}
+
+input LeaveServerDto {
+  serverId: Float!
+}
+
+type Member {
+  createdAt: DateTime
+  email: String
+  id: Float
+  imageUrl: String
+  name: String
+  profile: Profile
+  profileId: Float
+  role: MemberRole
+  server: Server
+  updatedAt: DateTime
+}
+
+"""Defines the role of a member in a server"""
+enum MemberRole {
+  ADMIN
+  GUEST
+  MODERATOR
+}
+
+type Message {
+  channel: Channel
+  content: String
+  createdAt: String
+  deleted: Boolean
+  fileUrl: String
+  id: Float
+  member: Member!
+  updatedAt: String
+}
+
+type MessageResult {
+  message: MessageUnion!
+}
+
+union MessageUnion = DirectMessage | Message
+
+type MessagesResult {
+  messages: [MessageUnion!]!
+}
+
+type Mutation {
+  addMemberToServer(inviteCode: String!, serverId: Float!): Server!
+  changeMemberRole(input: ChangeMemberRoleDto!): Server!
+  createAccessToken(chatId: String!, name: String!): String!
+  createChannelMessage(file: Upload, input: CreateChannelMessageDto!): Message!
+  createChannelOnServer(input: CreateChannelOnServerDto!): Server!
+  createMessage(file: Upload, input: CreateMessageDto!): MessageResult!
+  createProfile(input: CreateProfileDto!): Profile!
+  createServer(file: Upload, input: CreateServerDto!): Server!
+  deleteChannelFromServer(input: DeleteChannelFromServerDto!): String!
+  deleteMemberFromServer(input: DeleteMemberDto!): Server!
+  deleteMessage(channelId: Float, conversationId: Float, messageId: Float!): MessageResult!
+  deleteServer(input: DeleteServerDto!): String!
+  getOrCreateConversation(input: GetOrCreateConversationDto!): Conversation!
+  leaveServer(input: LeaveServerDto!): String!
+  login(email: String!): Profile!
+  updateChannel(input: UpdateChannelDto!): Channel!
+  updateMessage(channelId: Float, content: String!, conversationId: Float, messageId: Float!): MessageResult!
+  updateServer(file: Upload, input: UpdateServerDto!): Server!
+  updateServerWithNewInviteCode(serverId: Float!): Server!
+}
+
+type Profile {
+  channels: [Channel!]
+  email: String
+  id: Float
+  imageUrl: String
+  name: String
+  servers: [Server!]
+}
+
+type Query {
+  getChannelById(input: FindChannelByIdDto!): Channel!
+  getMemberById(memberId: Float!, serverId: Float!): Member!
+  getMemberByProfileId(profileId: Float!, serverId: Float!): Member!
+  getMessagesByChannelId(channelId: Float!): [Message!]!
+  getMessagesByConversationIdOrChannelId(channelId: Float, conversationId: Float): MessagesResult!
+  getProfileById(profileId: Float!): Profile!
+  getServerById(id: Float!, profileId: Float!): Server!
+  getServerByProfileIdOfMember(profileId: Float!): [Server!]!
+}
+
+type Server {
+  channels: [Channel!]
+  id: Float!
+  imageUrl: String
+  inviteCode: String
+  members: [Member!]
+  name: String
+  profile: Profile!
+  profileId: Float
+}
+
+type Subscription {
+  channelMessageCreated(channelId: Float, conversationId: Float): MessageResult!
+  messageCreated(channelId: Float, conversationId: Float): MessageResult!
+  messageDeleted(channelId: Float, conversationId: Float): MessageResult!
+  messageUpdated(channelId: Float, conversationId: Float): MessageResult!
+}
+
+input UpdateChannelDto {
+  channelId: Float!
+  name: String!
+  type: ChannelType!
+}
+
+input UpdateServerDto {
+  name: String!
+  serverId: Float!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
